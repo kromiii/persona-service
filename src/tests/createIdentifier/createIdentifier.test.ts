@@ -66,31 +66,36 @@ describe('createIdentifier', () => {
       persona: persona.id,
     });
 
-    const createPromise = service.createIdentifier({
-      ifi: {
-        key: 'account',
-        value: {
-          name,
-          homePage,
-        },
-      },
-      organisation: TEST_ORGANISATION,
-      persona: persona.id,
-    });
-
-    const createPromise2 = service.createIdentifier({
-      ifi: {
-        value: {
-          name,
-          homePage,
-        },
-        key: 'account',
-      },
-      organisation: TEST_ORGANISATION,
-      persona: persona.id,
-    });
-    await assertError(Conflict, createPromise);
-    await assertError(Conflict, createPromise2);
+    await Promise.all([
+      assertError(
+        Conflict,
+        service.createIdentifier({
+          ifi: {
+            key: 'account',
+            value: {
+              name,
+              homePage,
+            },
+          },
+          organisation: TEST_ORGANISATION,
+          persona: persona.id,
+        }),
+      ),
+      assertError(
+        Conflict,
+        service.createIdentifier({
+          ifi: {
+            value: {
+              name,
+              homePage,
+            },
+            key: 'account',
+          },
+          organisation: TEST_ORGANISATION,
+          persona: persona.id,
+        }),
+      ),
+    ]);
   });
 
   it('Should create identifiers in different organisations', async () => {
